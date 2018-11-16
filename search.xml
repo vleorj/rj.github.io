@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[FreeBSD 多路径]]></title>
+    <url>%2F2018%2F11%2F16%2F%E5%A4%9A%E8%B7%AF%E5%BE%84%2F</url>
+    <content type="text"><![CDATA[启用多路径，添加内核模块到 /boot/loader.conf 文件1geom_multipath_load=&quot;YES&quot; 简单使用方法 手动方法 1gmultipath create -Av name /dev/da1 /dev/da2 ... 自动方法 1gmultipath label -Rv name /dev/da1 /dev/da2 ... 此两种方法的区别在于手动方法不会写入元数据到硬盘 添加磁盘 1gmultipath add -v name /dev/da3 移除磁盘 1gmultipath remove -v name /dev/da3 参数说明-v 输出详细信息-A 选项 Active / Active 模式： 此模式下，所有未标记为 FAIL 的路径都可以同时处理 I / O-R 选项 Active / Read 模式： 所有未标记为 FAIL 的路径都可以同时处理读取，但与 Acitve / Active 模式不同， 只有一个 路径可以在任何时间点处理写入请求。 默认 Active / Passive 模式： 只有一条路径在任何时间点可有I / O 操作，直到路径失效后切换到其他路径。 模式切换 1gmultipath configure -R name 切换路径 （切换到下一条可用路径） 1gmultipath rotate name 切换到指定路径 1gmultipath prefer name /dev/da3 查看状态 1gmultipath status name 销毁多路径 1gmultipath destroy name 参考文档：FreeBSD 手册]]></content>
+      <tags>
+        <tag>freebsd</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[网卡绑定]]></title>
+    <url>%2F2018%2F11%2F16%2F%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A%2F</url>
+    <content type="text"><![CDATA[启用 lagg ，编辑 /boot/loader.conf 文件添加以下行1if_lagg_load=&quot;YES&quot; 支持的聚合协议类型 failover 只通过活动端口发送流量。如果主端口变为不可用，使下一个端口变为活动。第一个添加的接口为主接口， 任何之后添加的接口为失效转移设备。 默认只接受活动端口的流量，可以通过 sysctl 设置 net.link.lagg.failover_rx_all 变量为一个非零值来改变此限制。 lacp 支持IEEE 802.1AX 链路聚合控制协议与标记协议。链路聚合组（LAG）由相同速率的端口组成，且设置为全双工。流量在端口组内平衡 loadbalance 根据散列协议头信息平衡活动端口上的传出流量，并接受来自任何活动端口的传入流量。此为静态设置，不会监视链路状态。散列包括 MAC 源和目标地址，以及VLAN标记（如果可用）以及IP源和目标地址。 roundrobin 循环调度输出流量通过所有活动端口，接受任何活动端口的输入流量。使用 roundrobin 模式可能导致无序数据包到达客户端。 broadcast 将帧发送到 LAG 的所有端口，并在 LAG 的任何端口上接收帧。 none 什么也不做，禁用任何流量，而不会禁用lagg接口本身 配置 lagg12ifconfig lagg0 createifconfig lagg0 laggproto failover laggport em0 laggport em1 192.168.x.x netmask 255.255.255.0 要在重启时保留此配置，添加以下行到 /etc/rc.conf1234ifconfig_em0=&quot;up&quot;ifconfig_em1=&quot;up&quot;cloned_interfaces=&quot;lagg0&quot;ifconfig_lagg0=&quot;laggproto failover laggport em0 laggport em1 192.168.x.x/24&quot; 参考文章FreeBSD 手册lagg 手册]]></content>
+      <tags>
+        <tag>freebsd</tag>
+      </tags>
+  </entry>
+</search>
